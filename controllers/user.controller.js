@@ -1,4 +1,4 @@
-import e from "express";
+import bcrypt from "bcryptjs";
 import SignedUpUsers from "../models/user.model.js";
 
 export const signUp = async (req, res) => {
@@ -9,10 +9,14 @@ export const signUp = async (req, res) => {
         if (checkEmail) {
             return  res.status(400).json({ message: "Email already exists. Please use a different email." });
         } 
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const newUser = await SignedUpUsers.create({
             name,
             email,
-            password
+            password: hashedPassword,
         })
 
         res.status(201).json({ message: "User created successfully", user: newUser });
@@ -31,8 +35,9 @@ export const signIn = async (req, res) => {
             return res.status(404).json({ message: "User not found. Please sign up first." });
         }
 
-        if (user.password !== password) {
-            return res.status(401).json({ message: "Incorrect password. Please try again." });
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid password. Please try again." });
         }
 
         res.status(200).json({ message: "Sign-in successful", user });
