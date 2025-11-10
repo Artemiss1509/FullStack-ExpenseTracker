@@ -22,3 +22,22 @@ export const signUp = async (req, res) => {
     }
 }
 
+export const signIn = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await SignedUpUsers.findOne({ where: { email } });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found. Please sign up first." });
+        }
+
+        if (user.password !== password) {
+            return res.status(401).json({ message: "Incorrect password. Please try again." });
+        }
+
+        res.status(200).json({ message: "Sign-in successful", user });
+    } catch (error) {
+        res.status(500).json({ message: "Sign-in error", error: error.message });
+    }
+}
+
