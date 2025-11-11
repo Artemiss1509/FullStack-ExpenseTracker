@@ -3,6 +3,8 @@ import cors from 'cors';
 import userRouter from './routers/user.router.js';
 import SignedUpUsers from './models/user.model.js';
 import db from './utils/DB-connection.js';
+import expenseRouter from './routers/expense.router.js';
+
 
 const app = express();
 
@@ -10,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/user',userRouter)
+app.use('/expense',expenseRouter)
 
 db.sync({ alter: true }).then(() => {
   console.log('Database synced');
