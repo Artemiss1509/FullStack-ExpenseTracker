@@ -16,7 +16,7 @@ export const addExpense = async (req, res) => {
 }
 export const getAllExpenses = async (req, res) => {
     try {
-        const expenses = await Expenses.findAll();
+        const expenses = await Expenses.findAll({where: {userId: req.user.id}});
         res.status(200).json({ expenses });
     } catch (error) {
         res.status(500).json({ message: "Error retrieving expenses", error: error.message });

@@ -1,9 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import userRouter from './routers/user.router.js';
-import SignedUpUsers from './models/user.model.js';
 import db from './utils/DB-connection.js';
 import expenseRouter from './routers/expense.router.js';
+import SignedUpUsers from './models/user.model.js';
+import Expense from './models/expense.model.js';
 
 
 const app = express();
@@ -14,7 +15,10 @@ app.use(express.json());
 app.use('/user',userRouter)
 app.use('/expense',expenseRouter)
 
-db.sync({ alter: true }).then(() => {
+SignedUpUsers.hasMany(Expense)
+Expense.belongsTo(SignedUpUsers)
+
+db.sync().then(() => {
   console.log('Database synced');
   app.listen(3000, () => {
     console.log('Server is running on port 3000');

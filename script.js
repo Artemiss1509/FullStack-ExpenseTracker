@@ -14,7 +14,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if(expenseForm){
         expenseForm.addEventListener('submit', handleExpenseSubmit);
 
-        await axios.get('http://localhost:3000/expense/all')
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please sign in to view your expenses.');
+        }
+
+        await axios.get('http://localhost:3000/expense/all',{ headers: { "Authorization": `Bearer ${token}` }})
         .then(response => {
             console.log(response.data);
             response.data.expenses.forEach(expense => {
@@ -69,6 +74,8 @@ async function loginFormSubmit(event) {
     try {
         await axios.post('http://localhost:3000/user/sign-in', data)
         .then(response => {
+            const token = response.data.token;
+            localStorage.setItem('token', token);
             console.log(response.data);
             expensePage();
         })

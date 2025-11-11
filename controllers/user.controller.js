@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import SignedUpUsers from "../models/user.model.js";
+import { JWT_EXPIRY, JWT_SECRET } from "../utils/env.js";
 
 export const signUp = async (req, res) => {
     try {
@@ -31,6 +33,8 @@ export const signIn = async (req, res) => {
         const { email, password } = req.body;
         const user = await SignedUpUsers.findOne({ where: { email } });
 
+        
+
         if (!user) {
             return res.status(404).json({ message: "User not found. Please sign up first." });
         }
@@ -39,8 +43,9 @@ export const signIn = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid password. Please try again." });
         }
+        const token = jwt.sign({ id: user.id}, JWT_SECRET, { expiresIn: JWT_EXPIRY });
 
-        res.status(200).json({ message: "Sign-in successful", user });
+        res.status(200).json({ message: "Sign-in successful", user, token });
     } catch (error) {
         res.status(500).json({ message: "Sign-in error", error: error.message });
     }
