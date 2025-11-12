@@ -5,6 +5,7 @@ import db from './utils/DB-connection.js';
 import expenseRouter from './routers/expense.router.js';
 import SignedUpUsers from './models/user.model.js';
 import Expense from './models/expense.model.js';
+import paymentRouter from './routers/cashfree.router.js';
 
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use('/user',userRouter)
 app.use('/expense',expenseRouter)
+app.use('/payment', paymentRouter)
 
 SignedUpUsers.hasMany(Expense)
 Expense.belongsTo(SignedUpUsers)

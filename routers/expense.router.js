@@ -6,7 +6,7 @@ const router = Router();
 
 
 
-router.post('/add', addExpense)
+router.post('/add',authorise, addExpense)
 router.get('/all',authorise, getAllExpenses)
 router.delete('/delete/:id', deleteExpense)
 

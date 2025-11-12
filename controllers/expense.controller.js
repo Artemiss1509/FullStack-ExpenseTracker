@@ -7,7 +7,8 @@ export const addExpense = async (req, res) => {
         const newExpense = await Expenses.create({
             amount,
             description,
-            category
+            category,
+            UserId: req.user.id
         });
         res.status(201).json({ message: "Expense added successfully", expense: newExpense });
     } catch (error) {

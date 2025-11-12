@@ -91,15 +91,15 @@ async function loginFormSubmit(event) {
 
 async function handleExpenseSubmit(event) {
     event.preventDefault();
-
+    const token = localStorage.getItem('token');
     const data = {
         amount: event.target.amount.value,
         description: event.target.description.value,
-        category: event.target.category.value
+        category: event.target.category.value,
     }
 
     try {
-        await axios.post('http://localhost:3000/expense/add', data)
+        await axios.post('http://localhost:3000/expense/add', data,{ headers: { "Authorization": `Bearer ${token}` }})
         .then(response => {
             console.log(response.data);
             clearError();
