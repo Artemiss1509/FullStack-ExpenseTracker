@@ -37,9 +37,9 @@ export const createOrder = async (
 }
 
 
-export const getPaymentStatus = async(orderId)=>{
+export const getPaymentStatus = async(req, res)=>{
     try {
-        const response = await cashfree.PGOrderFetchPayments(orderId);
+        const response = await cashfree.PGOrderFetchPayments(req.params.id);
 
         let getOrderRes = response.data;
         let orderStatus;
@@ -52,6 +52,6 @@ export const getPaymentStatus = async(orderId)=>{
             orderStatus = "Failure"
         }
     } catch (error) {
-        console.error('Error fetching payment status:',)
+        console.error('Error fetching payment status:',error.message);
     }
 }

@@ -22,11 +22,25 @@ export const paymentProcess = async(req, res)=>{
             orderAmount,
             paymentSessionId,
             orderCurrency,
-            paymentStatus: "Pending"
+            paymentStatus: "Success",
+            UserId: req.user.id
         })
 
         res.json({paymentSessionId, orderId});
     } catch(error){
         res.status(500).json({message: "Error cashfree controller",error: error.message});
+    }
+}
+
+export const getPremiumStatus = async(req, res)=>{
+    try {
+        const payment = await Payment.findOne({where: {UserId: req.user.id}});
+        if(payment){
+            res.status(200).json({paymentStatus: payment.paymentStatus});
+        } else {
+            res.status(404).json({message: "No payment record found"});
+        }
+    } catch (error) {
+        res.status(500).json({message: "Error fetching premium status", error: error.message});
     }
 }

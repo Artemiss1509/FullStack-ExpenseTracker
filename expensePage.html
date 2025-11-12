@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Page</title>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 </head>
 <body>
     <div class="expense-container">
@@ -29,7 +30,38 @@
         <h3>Your Expenses</h3>
         <ul id="expenseList"></ul>
     </div>
+    <div id="row">
+        <p>Click below to open the checkout page in current tab</p>
+        <button id="renderBtn">Pay Now</button>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="script.js"></script>
+    <script>
+        const cashfree = Cashfree({
+            mode: "sandbox",
+        });
+        document.getElementById("renderBtn").addEventListener("click", async () => {
+
+            const token = localStorage.getItem('token');
+
+            try{
+                const response = await axios.post('http://localhost:3000/payment/create-order',null,{ headers: { "Authorization": `Bearer ${token}` }});
+                const data = response.data;
+                const paymentSessionId = data.paymentSessionId;
+
+                let checkoutOptions = {
+                    paymentSessionId: paymentSessionId,
+                    redirectTarget: "_self",
+                };
+                
+                await cashfree.checkout(checkoutOptions);
+            }catch(err){
+                console.error('Error cashfreePage:',err);
+            }
+
+            
+        });
+    </script>
+    
 </body>
 </html>

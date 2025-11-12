@@ -5,6 +5,7 @@ import db from './utils/DB-connection.js';
 import expenseRouter from './routers/expense.router.js';
 import SignedUpUsers from './models/user.model.js';
 import Expense from './models/expense.model.js';
+import Payment from './models/payment.model.js';
 import paymentRouter from './routers/cashfree.router.js';
 
 
@@ -19,6 +20,9 @@ app.use('/payment', paymentRouter)
 
 SignedUpUsers.hasMany(Expense)
 Expense.belongsTo(SignedUpUsers)
+
+SignedUpUsers.hasOne(Payment)
+Payment.belongsTo(SignedUpUsers)
 
 db.sync().then(() => {
   console.log('Database synced');
