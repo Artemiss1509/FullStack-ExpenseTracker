@@ -1,6 +1,6 @@
 import Expenses from "../models/expense.model.js";
 import SignedUpUsers from "../models/user.model.js";
-import { fn, col, literal } from "sequelize";
+import sequelize from "sequelize";
 
 
 export const addExpense = async (req, res) => {
@@ -45,7 +45,7 @@ export const getLeaderBoard = async (req, res) => {
       attributes: [
         'id',
         'name',
-        [ fn('SUM', col('Expenses.amount')), 'totalExpense' ],
+        [ sequelize.fn('SUM', sequelize.col('Expenses.amount')), 'totalExpense' ],
       ],
       include: [
         {
@@ -54,8 +54,8 @@ export const getLeaderBoard = async (req, res) => {
           required: false, 
         },
       ],
-      group: [ col('User.id'), col('User.name') ],
-      order: [ [ col('totalExpense'), 'DESC' ] ],
+      group: [ sequelize.col('User.id'), sequelize.col('User.name') ],
+      order: [ [ sequelize.col('totalExpense'), 'DESC' ] ],
       raw: true,
     });
 
