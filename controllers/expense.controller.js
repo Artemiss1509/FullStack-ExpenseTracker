@@ -12,6 +12,10 @@ export const addExpense = async (req, res) => {
             category,
             UserId: req.user.id
         });
+        await SignedUpUsers.increment(
+          {totalExpense: amount},
+          {where: {id: req.user.id}}
+        )
         res.status(201).json({ message: "Expense added successfully", expense: newExpense });
     } catch (error) {
         res.status(500).json({ message: "Error adding expense", error: error.message });
@@ -42,22 +46,10 @@ export const deleteExpense = async (req, res) => {
 export const getLeaderBoard = async (req, res) => {
   try {
     const leaderboard = await SignedUpUsers.findAll({
-      attributes: [
-        'id',
-        'name',
-        [ sequelize.fn('SUM', sequelize.col('Expenses.amount')), 'totalExpense' ],
-      ],
-      include: [
-        {
-          model: Expenses,
-          attributes: [], 
-          required: false, 
-        },
-      ],
-      group: [ sequelize.col('User.id'), sequelize.col('User.name') ],
-      order: [ [ sequelize.col('totalExpense'), 'DESC' ] ],
-      raw: true,
-    });
+      order:[
+        ['totalExpense', 'DESC']
+      ]
+    })
 
     res.status(200).json({ leaderboard });
   } catch (error) {
