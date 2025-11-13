@@ -8,7 +8,7 @@ const router = Router();
 
 router.post('/add',authorise, addExpense)
 router.get('/all',authorise, getAllExpenses)
-router.delete('/delete/:id', deleteExpense)
+router.delete('/delete/:id',authorise, deleteExpense)
 router.get('/leaderboard',getLeaderBoard )
 
 export default router;

@@ -103,7 +103,6 @@ async function handleExpenseSubmit(event) {
     const data = {
         amount: event.target.amount.value,
         description: event.target.description.value,
-        category: event.target.category.value,
     }
 
     try {
@@ -157,7 +156,8 @@ function expensePage() {
 }
 
 async function deleteExpense(expenseId) {
-    await axios.delete(`http://localhost:3000/expense/delete/${expenseId}`)
+    const token = localStorage.getItem('token')
+    await axios.delete(`http://localhost:3000/expense/delete/${expenseId}`,{ headers: { "Authorization": `Bearer ${token}` } })
         .then(response => {
             console.log(response.data);
         })
@@ -195,18 +195,15 @@ async function leaderBoard() {
     const token = localStorage.getItem('token');
 
     try {
-        const resp = await axios.get('http://localhost:3000/expense/leaderboard', {
-            // uncomment if you add auth on the route:
-            // headers: { Authorization: `Bearer ${token}` }
-        });
-        list.innerHTML = ''; // clear
+        const resp = await axios.get('http://localhost:3000/expense/leaderboard');
+        list.innerHTML = '';
         resp.data.leaderboard.forEach((user) => {
             const li = document.createElement('li');
             const total = Number(user.totalExpense || 0).toFixed(2);
             li.innerText = `Name: ${user.name}, Total Expense: ${total}`;
             list.appendChild(li);
         });
-        row1.innerHTML = ''; // optional: clear previous content
+        row1.innerHTML = '';
         row1.appendChild(list);
     } catch (error) {
         console.error('Error fetching leaderboard', error);
