@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const signUpForm = document.getElementById('signupForm');
     const signInForm = document.getElementById('loginForm');
     const expenseForm = document.getElementById('expenseForm');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const resetForm = document.getElementById('resetEmail')
 
     if (signUpForm) {
         signUpForm.addEventListener('submit', handleFormSubmit);
@@ -38,6 +40,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }).catch(err => {
             console.error('Error fetching premium status', err);
         });
+    }
+
+    if(logoutBtn){
+        logoutBtn.addEventListener('click', signout)
+    }
+    if(resetForm){
+        resetForm.addEventListener('submit',resetPass)
     }
 
 
@@ -168,7 +177,7 @@ async function deleteExpense(expenseId) {
 
 function displayPremiumFeatures() {
     const rentBut = document.getElementById('row');
-    const mainDiv = document.getElementById('message');
+    const mainDiv = document.querySelector('.expense-container');
 
     if (rentBut) {
         rentBut.innerHTML = '';
@@ -192,7 +201,9 @@ function displayPremiumFeatures() {
 async function leaderBoard() {
     const row1 = document.getElementById('row');
     const list = document.createElement('ul');
-    const token = localStorage.getItem('token');
+    const head = document.createElement('h2')
+
+    head.innerText = 'Leaderboard'
 
     try {
         const resp = await axios.get('http://localhost:3000/expense/leaderboard');
@@ -204,9 +215,33 @@ async function leaderBoard() {
             list.appendChild(li);
         });
         row1.innerHTML = '';
+        row1.appendChild(head);
         row1.appendChild(list);
     } catch (error) {
         console.error('Error fetching leaderboard', error);
     }
 }
 
+function signout(){
+    localStorage.clear();
+    location.replace("loginPage.html")
+}
+
+async function resetPass(event){
+    event.preventDefault();
+
+    const data = {email : event.target.email.value}
+    const div = document.getElementById('reset')
+    const para = document.createElement('p');   
+
+    try {
+        const checkEmail = await axios.post('http://localhost:3000/user/reset',data);
+        if(checkEmail.data.message){
+            para.innerText = `Reset link has been sent to the email: ${data.email}`
+        }
+        div.appendChild(para)
+    } catch (error) {
+        para.innerText = `${data.email} does not exist. Please if email entered is correct`
+        div.appendChild(para)
+    }
+}

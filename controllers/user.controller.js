@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import SignedUpUsers from "../models/user.model.js";
 import { JWT_EXPIRY, JWT_SECRET } from "../utils/env.js";
+import { sendResetEmail } from "../services/send.email.js";
 
 export const signUp = async (req, res) => {
     try {
@@ -51,3 +52,17 @@ export const signIn = async (req, res) => {
     }
 }
 
+export const resetPass = async(req, res)=>{
+    try {
+        const {email} = req.body
+        const user = await SignedUpUsers.findOne({where:{email}})
+        if(!user){
+            return res.status(404).json({message: false})
+        }else{
+            await sendResetEmail(email,user.dataValues.name,"http://127.0.0.1:5500/loginPage.html")
+            return res.status(200).json({message:true})
+        }
+    } catch (error) {
+        res.status(500).json({message:'Reset Controller error',error:error.message})
+    }
+}

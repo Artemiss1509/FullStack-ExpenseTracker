@@ -24,7 +24,7 @@ Expense.belongsTo(SignedUpUsers)
 SignedUpUsers.hasOne(Payment)
 Payment.belongsTo(SignedUpUsers)
 
-db.sync().then(() => {
+db.sync({alter:true}).then(() => {
   console.log('Database synced');
   app.listen(3000, () => {
     console.log('Server is running on port 3000');
