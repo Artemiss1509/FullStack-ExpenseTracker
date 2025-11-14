@@ -7,6 +7,7 @@ import SignedUpUsers from './models/user.model.js';
 import Expense from './models/expense.model.js';
 import Payment from './models/payment.model.js';
 import paymentRouter from './routers/cashfree.router.js';
+import PasswordResetReq from './models/passwordReset.js';
 
 
 const app = express();
@@ -24,7 +25,10 @@ Expense.belongsTo(SignedUpUsers)
 SignedUpUsers.hasOne(Payment)
 Payment.belongsTo(SignedUpUsers)
 
-db.sync({alter:true}).then(() => {
+SignedUpUsers.hasMany(PasswordResetReq)
+PasswordResetReq.belongsTo(SignedUpUsers)
+
+db.sync().then(() => {
   console.log('Database synced');
   app.listen(3000, () => {
     console.log('Server is running on port 3000');
