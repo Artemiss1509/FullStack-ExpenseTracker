@@ -54,21 +54,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     tabItems.forEach(item => {
         item.addEventListener('click', () => {
-        // Remove 'active' class from all tab items and panes
         tabItems.forEach(i => i.classList.remove('active'));
         tabPanes.forEach(p => p.classList.remove('active'));
 
-        // Add 'active' class to the clicked tab item
         item.classList.add('active');
 
-        // Get the data-tab attribute to identify the target pane
         const targetTab = item.dataset.tab;
         const targetPane = document.getElementById(targetTab);
 
-        // Add 'active' class to the corresponding tab pane
         if (targetPane) {
             targetPane.classList.add('active');
         }
+        const tabEndpoints = {
+            daily: 'daily',
+            weekly: 'weekly',
+            monthly: 'monthly'
+            };
+        const endpoint = tabEndpoints[targetTab];
+        getExpenses(endpoint, targetTab, targetPane,1,3)
         });
     });
 
@@ -270,4 +273,76 @@ async function resetPass(event){
 function removeGreyOut(){
     const premiumClass = document.querySelector('.premium-feature.premium-locked');
     premiumClass.classList.remove('premium-locked')
+}
+
+async function getExpenses(endpoint, targetTab, targetPane, page = 1, pageSize = 3) {
+  const token = localStorage.getItem('token');
+  if (!endpoint) return console.warn(`No endpoint for ${targetTab}`);
+
+  try {
+    const url = `http://localhost:3000/expense/${endpoint}?page=${page}&pageSize=${pageSize}`;
+    const res = await axios.get(url, { headers: { "Authorization": `Bearer ${token}` } });
+
+    const { expenses = [], total = 0, totalPages = 1 } = res.data;
+
+    // Render expenses list
+    targetPane.innerHTML = `
+      <h3>${targetTab.toUpperCase()}</h3>
+      <ul class="expense-list">
+        ${expenses.map(e => `
+          <li class="expense-row">
+            <div class="expense-amount">₹${e.amount}</div>
+            <div class="expense-desc">${e.description}</div>
+            <div class="expense-cat">${e.category}</div>
+          </li>
+        `).join('') || `<li>No expenses found.</li>`}
+      </ul>
+      <div class="pagination" id="pagination-${endpoint}"></div>
+    `;
+
+    // render pagination controls into the div with id pagination-${endpoint}
+    renderPagination(endpoint, targetTab, targetPane, page, totalPages, pageSize);
+  } catch (error) {
+    console.error(`Error fetching ${targetTab}:`, error);
+    targetPane.innerHTML = `<p style="color:red;">Error loading ${targetTab} data.</p>`;
+  }
+}
+
+// render pagination controls and bind events
+function renderPagination(endpoint, targetTab, targetPane, currentPage, totalPages, pageSize) {
+  const container = document.getElementById(`pagination-${endpoint}`);
+  if (!container) return;
+
+  container.innerHTML = ''; // clear
+
+  // prev button
+  const prev = document.createElement('button');
+  prev.innerText = 'Prev';
+  prev.disabled = currentPage <= 1;
+  prev.addEventListener('click', () => getExpenses(endpoint, targetTab, targetPane, currentPage - 1, pageSize));
+  container.appendChild(prev);
+
+  // page numbers (show window of pages)
+  const windowSize = 5;
+  let start = Math.max(1, currentPage - Math.floor(windowSize/2));
+  let end = Math.min(totalPages, start + windowSize - 1);
+  if (end - start + 1 < windowSize) start = Math.max(1, end - windowSize + 1);
+
+  for (let p = start; p <= end; p++) {
+    const btn = document.createElement('button');
+    btn.innerText = p;
+    if (p === currentPage) {
+      btn.disabled = true;
+      btn.classList.add('active-page');
+    }
+    btn.addEventListener('click', () => getExpenses(endpoint, targetTab, targetPane, p, pageSize));
+    container.appendChild(btn);
+  }
+
+  // next button
+  const next = document.createElement('button');
+  next.innerText = 'Next';
+  next.disabled = currentPage >= totalPages;
+  next.addEventListener('click', () => getExpenses(endpoint, targetTab, targetPane, currentPage + 1, pageSize));
+  container.appendChild(next);
 }
