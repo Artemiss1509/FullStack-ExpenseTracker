@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Page</title>
     <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="expense-container">
         <h2>Track Your Expenses</h2>
@@ -35,6 +38,33 @@
         <p>Click below to open the checkout page in current tab</p>
         <button id="renderBtn">Pay Now</button>
     </div>
+    <div class="premium-feature premium-locked">
+        <ul class="tab-nav">
+            <li class="tab-item active" data-tab="daily">Daily Expenses</li>
+            <li class="tab-item" data-tab="weekly">Weekly Expense</li>
+            <li class="tab-item" data-tab="monthly">Monthly Expenses</li>
+        </ul>
+        <button>Download</button>
+
+    <div class="tab-content">
+        <div id="daily" class="tab-pane active">
+            <!-- Content for Daily Expenses -->
+            <h2>Daily Expenses</h2>
+            <p>Details of your daily spending.</p>
+        </div>
+        <div id="weekly" class="tab-pane">
+            <!-- Content for Weekly Expenses -->
+            <h2>Weekly Expenses</h2>
+            <p>Details of your weekly spending.</p>
+        </div>
+        <div id="monthly" class="tab-pane">
+            <!-- Content for Monthly Expenses -->
+            <h2>Monthly Expenses</h2>
+            <p>Details of your monthly spending.</p>
+        </div>
+        </div>
+    </div>
+
     <div id="logout">
         <button id="logoutBtn">Sign Out</button>
     </div>
@@ -48,8 +78,8 @@
 
             const token = localStorage.getItem('token');
 
-            try{
-                const response = await axios.post('http://localhost:3000/payment/create-order',null,{ headers: { "Authorization": `Bearer ${token}` }});
+            try {
+                const response = await axios.post('http://localhost:3000/payment/create-order', null, { headers: { "Authorization": `Bearer ${token}` } });
                 const data = response.data;
                 const paymentSessionId = data.paymentSessionId;
 
@@ -57,15 +87,16 @@
                     paymentSessionId: paymentSessionId,
                     redirectTarget: "_self",
                 };
-                
+
                 await cashfree.checkout(checkoutOptions);
-            }catch(err){
-                console.error('Error cashfreePage:',err);
+            } catch (err) {
+                console.error('Error cashfreePage:', err);
             }
 
-            
+
         });
     </script>
-    
+
 </body>
+
 </html>

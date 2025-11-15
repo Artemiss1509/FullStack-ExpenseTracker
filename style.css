@@ -1,0 +1,41 @@
+.premium-feature.premium-locked {
+    /* Gray out the appearance */
+    opacity: 0.5;
+    /* Prevent mouse clicks and other pointer events */
+    pointer-events: none;
+    /* Optional: Change cursor to indicate it's not usable */
+    cursor: not-allowed;
+}
+
+.tab-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+.tab-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background-color: #f0f0f0;
+}
+
+.tab-item.active {
+  background-color: #fff;
+  border-color: #ccc;
+  border-bottom: 1px solid #fff;
+}
+
+.tab-pane {
+  display: none; /* Hide all content panes by default */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.tab-pane.active {
+  display: block; /* Show the active content pane */
+}

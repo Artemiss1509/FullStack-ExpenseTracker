@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const expenseForm = document.getElementById('expenseForm');
     const logoutBtn = document.getElementById('logoutBtn');
     const resetForm = document.getElementById('resetEmail')
+    const tabItems = document.querySelectorAll('.tab-item');
+    const tabPanes = document.querySelectorAll('.tab-pane');
 
     if (signUpForm) {
         signUpForm.addEventListener('submit', handleFormSubmit);
@@ -36,6 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await axios.get('http://localhost:3000/payment/premium-status', { headers: { "Authorization": `Bearer ${token}` } }).then(response => {
             if (response.data.paymentStatus === 'Success') {
                 displayPremiumFeatures();
+                removeGreyOut();
             }
         }).catch(err => {
             console.error('Error fetching premium status', err);
@@ -49,6 +52,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         resetForm.addEventListener('submit',resetPass)
     }
 
+    tabItems.forEach(item => {
+        item.addEventListener('click', () => {
+        // Remove 'active' class from all tab items and panes
+        tabItems.forEach(i => i.classList.remove('active'));
+        tabPanes.forEach(p => p.classList.remove('active'));
+
+        // Add 'active' class to the clicked tab item
+        item.classList.add('active');
+
+        // Get the data-tab attribute to identify the target pane
+        const targetTab = item.dataset.tab;
+        const targetPane = document.getElementById(targetTab);
+
+        // Add 'active' class to the corresponding tab pane
+        if (targetPane) {
+            targetPane.classList.add('active');
+        }
+        });
+    });
 
 })
 
@@ -244,4 +266,8 @@ async function resetPass(event){
         para.innerText = `${data.email} does not exist. Please if email entered is correct`
         div.appendChild(para)
     }
+}
+function removeGreyOut(){
+    const premiumClass = document.querySelector('.premium-feature.premium-locked');
+    premiumClass.classList.remove('premium-locked')
 }

@@ -57,10 +57,10 @@ export const resetPass = async (req, res) => {
     try {
         const { email } = req.body
         const user = await SignedUpUsers.findOne({ where: { email } })
-        await PasswordResetReq.create({
+        
+        const newUuid = await PasswordResetReq.create({
             UserId: user.dataValues.id
         })
-        const newUuid = await PasswordResetReq.findOne({ where: { UserId: user.dataValues.id } })
         if (!user) {
             return res.status(404).json({ message: false })
         } else {
@@ -73,35 +73,52 @@ export const resetPass = async (req, res) => {
 }
 
 export const passwordReset = async (req, res) => {
-    try {
-        const { id } = req.params
-        const checkId = await PasswordResetReq.findOne({ where: { id } })
-        if (!checkId) {
-            return res.status(400).send("Invalid or expired password reset link.");
-        }
-        return res.redirect(`resetPassword.html`);
-    } catch (error) {
-        res.status(500).json({ message: "Password reset link clicked error", error: error.message })
+  try {
+    const { id } = req.params;
+    const resetReq = await PasswordResetReq.findOne({ where: { id, isActive: true } });
+
+    if (!resetReq) {
+      return res.status(400).send("Invalid or expired password reset link.");
     }
-}
+
+    return res.redirect(`http://127.0.0.1:5500/resetPassword.html?token=${id}`);
+  } catch (error) {
+    console.error("passwordReset error:", error);
+    return res.status(500).json({ message: "Password reset link clicked error", error: error.message });
+  }
+};
 
 export const updatePassword = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const checkEmail = await SignedUpUsers.findOne({ where: { email } });
+  try {
+    const token = req.params.token || req.query.token;
+    const { password } = req.body;
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        if (checkEmail) {
-            checkEmail.password = hashedPassword;
-            await checkEmail.save()
-        } else if (!checkEmail) {
-            return res.status(404).json({ message: "Email not found" })
-        }
-
-        res.status(201).json({ message: "User created successfully", user: newUser });
-
-    } catch (error) {
-        res.status(500).json({ message: "User not created. Sign-up error", error: error.message });
+    if (!token) {
+      return res.status(400).json({ message: "Missing or invalid reset token" });
     }
-}
+    const resetReq = await PasswordResetReq.findOne({ where: { id: token, isActive: true } });
+
+    if (!resetReq) {
+      return res.status(400).json({ message: "Invalid or expired reset token" });
+    }
+    const user = await SignedUpUsers.findByPk(resetReq.UserId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    resetReq.isActive = false;
+    await resetReq.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("updatePassword error:", error);
+    res.status(500).json({ message: "Password not updated", error: error.message });
+  }
+};
+
