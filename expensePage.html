@@ -44,24 +44,32 @@
             <li class="tab-item" data-tab="weekly">Weekly Expense</li>
             <li class="tab-item" data-tab="monthly">Monthly Expenses</li>
         </ul>
-        <button>Download</button>
+        <div>
+            <label for="pageSizeSelect">Page size</label>
+            <select id="pageSizeSelect" aria-label="Page size">
+                <option value="3" selected>3</option>
+                <option value="5" >5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+        </div>
 
-    <div class="tab-content">
-        <div id="daily" class="tab-pane active">
-            <!-- Content for Daily Expenses -->
-            <h2>Daily Expenses</h2>
-            <p>Details of your daily spending.</p>
-        </div>
-        <div id="weekly" class="tab-pane">
-            <!-- Content for Weekly Expenses -->
-            <h2>Weekly Expenses</h2>
-            <p>Details of your weekly spending.</p>
-        </div>
-        <div id="monthly" class="tab-pane">
-            <!-- Content for Monthly Expenses -->
-            <h2>Monthly Expenses</h2>
-            <p>Details of your monthly spending.</p>
-        </div>
+        <div class="tab-content">
+            <div id="daily" class="tab-pane active">
+                <!-- Content for Daily Expenses -->
+                <h2>Daily Expenses</h2>
+                <p>Details of your daily spending.</p>
+            </div>
+            <div id="weekly" class="tab-pane">
+                <!-- Content for Weekly Expenses -->
+                <h2>Weekly Expenses</h2>
+                <p>Details of your weekly spending.</p>
+            </div>
+            <div id="monthly" class="tab-pane">
+                <!-- Content for Monthly Expenses -->
+                <h2>Monthly Expenses</h2>
+                <p>Details of your monthly spending.</p>
+            </div>
         </div>
     </div>
 

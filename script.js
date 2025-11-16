@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resetForm = document.getElementById('resetEmail')
     const tabItems = document.querySelectorAll('.tab-item');
     const tabPanes = document.querySelectorAll('.tab-pane');
+    const currentSize1 = document.getElementById('pageSizeSelect');
+    let currentSize;
 
     if (signUpForm) {
         signUpForm.addEventListener('submit', handleFormSubmit);
@@ -51,6 +53,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if(resetForm){
         resetForm.addEventListener('submit',resetPass)
     }
+    if(currentSize1){
+        currentSize1.addEventListener('change', ()=>{
+            currentSize = currentSize1.value
+        })
+    }
 
     tabItems.forEach(item => {
         item.addEventListener('click', () => {
@@ -61,6 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const targetTab = item.dataset.tab;
         const targetPane = document.getElementById(targetTab);
+        
 
         if (targetPane) {
             targetPane.classList.add('active');
@@ -71,7 +79,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             monthly: 'monthly'
             };
         const endpoint = tabEndpoints[targetTab];
-        getExpenses(endpoint, targetTab, targetPane,1,3)
+        if(currentSize1){
+            currentSize1.addEventListener('change', ()=>{
+                let totalP = localStorage.getItem('totalPages')
+                currentSize = currentSize1.value;
+                renderPagination(endpoint, targetTab, targetPane, 1, totalP, currentSize)
+                getExpenses(endpoint, targetTab, targetPane,1,currentSize)
+            })
+        }
+        getExpenses(endpoint, targetTab, targetPane,1,currentSize)
+        
         });
     });
 
@@ -284,8 +301,8 @@ async function getExpenses(endpoint, targetTab, targetPane, page = 1, pageSize =
     const res = await axios.get(url, { headers: { "Authorization": `Bearer ${token}` } });
 
     const { expenses = [], total = 0, totalPages = 1 } = res.data;
+    localStorage.setItem('totalPages', totalPages)
 
-    // Render expenses list
     targetPane.innerHTML = `
       <h3>${targetTab.toUpperCase()}</h3>
       <ul class="expense-list">
@@ -295,12 +312,12 @@ async function getExpenses(endpoint, targetTab, targetPane, page = 1, pageSize =
             <div class="expense-desc">${e.description}</div>
             <div class="expense-cat">${e.category}</div>
           </li>
+          <button>Delete</button>
         `).join('') || `<li>No expenses found.</li>`}
       </ul>
       <div class="pagination" id="pagination-${endpoint}"></div>
     `;
 
-    // render pagination controls into the div with id pagination-${endpoint}
     renderPagination(endpoint, targetTab, targetPane, page, totalPages, pageSize);
   } catch (error) {
     console.error(`Error fetching ${targetTab}:`, error);
@@ -308,21 +325,18 @@ async function getExpenses(endpoint, targetTab, targetPane, page = 1, pageSize =
   }
 }
 
-// render pagination controls and bind events
 function renderPagination(endpoint, targetTab, targetPane, currentPage, totalPages, pageSize) {
   const container = document.getElementById(`pagination-${endpoint}`);
   if (!container) return;
 
-  container.innerHTML = ''; // clear
+  container.innerHTML = ''; 
 
-  // prev button
   const prev = document.createElement('button');
   prev.innerText = 'Prev';
   prev.disabled = currentPage <= 1;
   prev.addEventListener('click', () => getExpenses(endpoint, targetTab, targetPane, currentPage - 1, pageSize));
   container.appendChild(prev);
 
-  // page numbers (show window of pages)
   const windowSize = 5;
   let start = Math.max(1, currentPage - Math.floor(windowSize/2));
   let end = Math.min(totalPages, start + windowSize - 1);
@@ -339,7 +353,6 @@ function renderPagination(endpoint, targetTab, targetPane, currentPage, totalPag
     container.appendChild(btn);
   }
 
-  // next button
   const next = document.createElement('button');
   next.innerText = 'Next';
   next.disabled = currentPage >= totalPages;
