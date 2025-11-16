@@ -1,6 +1,7 @@
 import { Cashfree, CFEnvironment } from "cashfree-pg"; 
+import {CASHFREE_API, CASHFREE_SECRET} from "../utils/env.js"
 
-const cashfree = new Cashfree(CFEnvironment.SANDBOX, "TEST430329ae80e0f32e41a393d78b923034", "TESTaf195616268bd6202eeb3bf8dc458956e7192a85");
+const cashfree = new Cashfree(CFEnvironment.SANDBOX, CASHFREE_SECRET, CASHFREE_API);
 
 export const createOrder = async (
     orderId,

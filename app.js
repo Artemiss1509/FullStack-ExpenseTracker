@@ -8,12 +8,23 @@ import Expense from './models/expense.model.js';
 import Payment from './models/payment.model.js';
 import paymentRouter from './routers/cashfree.router.js';
 import PasswordResetReq from './models/passwordReset.js';
-
-
+import compression from 'compression';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import fs from 'fs'
+import path from 'path'
 const app = express();
+
+const accessLogStream = fs.createWriteStream(path.join('access.log'),{flags:'a'})
+
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined',{stream:accessLogStream}));
 
 app.use(cors());
 app.use(express.json());
+
 
 app.use('/user',userRouter)
 app.use('/expense',expenseRouter)
