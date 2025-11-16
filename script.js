@@ -154,6 +154,7 @@ async function handleExpenseSubmit(event) {
     const data = {
         amount: event.target.amount.value,
         description: event.target.description.value,
+        Notes: event.target.description.value
     }
 
     try {

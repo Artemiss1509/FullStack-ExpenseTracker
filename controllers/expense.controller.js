@@ -7,7 +7,7 @@ import { Op } from "sequelize";
 import {dayRange, lastNDaysRange, currentMonthRange }  from "../utils/day.range.js";
 
 export const addExpense = async (req, res) => {
-  const { amount, description } = req.body;
+  const { amount, description, Notes } = req.body;
   const ai = new GoogleGenAI({ apiKey: GOOGLE_API });
   let category;
   try {
@@ -26,7 +26,8 @@ export const addExpense = async (req, res) => {
       amount,
       description,
       category,
-      UserId: req.user.id
+      UserId: req.user.id,
+      Notes
     }, { transaction });
 
     await SignedUpUsers.increment(
