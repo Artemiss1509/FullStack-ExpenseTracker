@@ -20,7 +20,7 @@ const accessLogStream = fs.createWriteStream(path.join('access.log'),{flags:'a'}
 
 app.use(helmet());
 app.use(compression());
-app.use(morgan('combined',{stream:accessLogStream}));
+// app.use(morgan('combined',{stream:accessLogStream}));
 
 app.use(cors());
 app.use(express.json());

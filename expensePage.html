@@ -10,71 +10,73 @@
 </head>
 
 <body>
-    <div class="expense-container">
-        <h2>Track Your Expenses</h2>
-        <form id="expenseForm">
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" name="amount" required>
-            <label for="description">Description:</label>
-            <input type="text" id="description" name="description" required>
-            <label for="category">Category:</label>
-            <!-- <select id="category" name="category" required>
-                <option value="food">Food</option>
-                <option value="transportation">Transportation</option>
-                <option value="utilities">Utilities</option>
-                <option value="entertainment">Entertainment</option>
-                <option value="other">Other</option>
-            </select> -->
-            <p>Your expenses will be automatically categorised by our AI</p>
-            <button type="submit">Add Expense</button>
-        </form>
-        <div id="message"></div>
-    </div>
-    <div class="view-expenses">
-        <h3>Your Expenses</h3>
-        <ul id="expenseList"></ul>
-    </div>
-    <div id="row">
-        <p>Click below to open the checkout page in current tab</p>
-        <button id="renderBtn">Pay Now</button>
-    </div>
-    <div class="premium-feature premium-locked">
-        <ul class="tab-nav">
-            <li class="tab-item active" data-tab="daily">Daily Expenses</li>
-            <li class="tab-item" data-tab="weekly">Weekly Expense</li>
-            <li class="tab-item" data-tab="monthly">Monthly Expenses</li>
-        </ul>
-        <div>
-            <label for="pageSizeSelect">Page size</label>
-            <select id="pageSizeSelect" aria-label="Page size">
-                <option value="3" selected>3</option>
-                <option value="5" >5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-            </select>
+    <div class="container">
+        <div class="expense-container">
+            <h2>Track Your Expenses</h2>
+            <form id="expenseForm">
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" name="amount" required>
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="description" required>
+                <label for="category">Category:</label>
+                <!-- <select id="category" name="category" required>
+                    <option value="food">Food</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="other">Other</option>
+                </select> -->
+                <p>Your expenses will be automatically categorised by our AI</p>
+                <button type="submit">Add Expense</button>
+            </form>
+            <div id="message"></div>
+        </div>
+        <div class="view-expenses">
+            <h3>Your Expenses</h3>
+            <ul id="expenseList"></ul>
+        </div>
+        <div id="row">
+            <p>Become a Premium User now!!!</p>
+            <button id="renderBtn">Pay Now</button>
+        </div>
+        <div class="premium-feature premium-locked">
+            <ul class="tab-nav">
+                <li class="tab-item active" data-tab="daily">Daily Expenses</li>
+                <li class="tab-item" data-tab="weekly">Weekly Expense</li>
+                <li class="tab-item" data-tab="monthly">Monthly Expenses</li>
+            </ul>
+            <div>
+                <label for="pageSizeSelect">Page size</label>
+                <select id="pageSizeSelect" aria-label="Page size">
+                    <option value="3" selected>3</option>
+                    <option value="5" >5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+
+            <div class="tab-content">
+                <div id="daily" class="tab-pane active">
+                    <!-- Content for Daily Expenses -->
+                    <h2>Daily Expenses</h2>
+                    <p>Details of your daily spending.</p>
+                </div>
+                <div id="weekly" class="tab-pane">
+                    <!-- Content for Weekly Expenses -->
+                    <h2>Weekly Expenses</h2>
+                    <p>Details of your weekly spending.</p>
+                </div>
+                <div id="monthly" class="tab-pane">
+                    <!-- Content for Monthly Expenses -->
+                    <h2>Monthly Expenses</h2>
+                    <p>Details of your monthly spending.</p>
+                </div>
+            </div>
         </div>
 
-        <div class="tab-content">
-            <div id="daily" class="tab-pane active">
-                <!-- Content for Daily Expenses -->
-                <h2>Daily Expenses</h2>
-                <p>Details of your daily spending.</p>
-            </div>
-            <div id="weekly" class="tab-pane">
-                <!-- Content for Weekly Expenses -->
-                <h2>Weekly Expenses</h2>
-                <p>Details of your weekly spending.</p>
-            </div>
-            <div id="monthly" class="tab-pane">
-                <!-- Content for Monthly Expenses -->
-                <h2>Monthly Expenses</h2>
-                <p>Details of your monthly spending.</p>
-            </div>
+        <div id="logout">
+            <button id="logoutBtn">Sign Out</button>
         </div>
-    </div>
-
-    <div id="logout">
-        <button id="logoutBtn">Sign Out</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="script.js"></script>

@@ -4,14 +4,19 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Password Reset</title>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div id="reset">
-            <form id="resetEmail">
-                <label>Enter account Email:</label>
-                <input type="text" id="email" name="email" required>
-                <button type="submit">Reset</button>
-            </form>
+        <div class="auth-page">
+            <div class="auth-card card">
+                <div id="reset">
+                    <form id="resetEmail">
+                        <label>Enter account Email:</label>
+                        <input type="text" id="email" name="email" required>
+                        <button type="submit">Reset</button>
+                    </form>
+                </div>
+            </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="script.js"></script>
