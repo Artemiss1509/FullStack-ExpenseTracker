@@ -1,6 +1,7 @@
-const {Sequelize} = require('sequelize')
+import { Sequelize } from 'sequelize';
+import {DB_NAME, DB_USER, DB_PASSWORD, DB_ENDPOINT} from './env.js'
 
-const sequelize = new Sequelize('NewDB','root','Artemiss1509',{
+const sequelize = new Sequelize(DB_NAME, DB_USER,DB_PASSWORD,{
     host: 'localhost',
     dialect: 'mysql'
 });
@@ -14,4 +15,4 @@ const sequelize = new Sequelize('NewDB','root','Artemiss1509',{
 }})();
 
 
-module.exports=sequelize;
+export default sequelize;

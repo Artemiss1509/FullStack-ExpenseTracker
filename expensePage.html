@@ -89,7 +89,7 @@
             const token = localStorage.getItem('token');
 
             try {
-                const response = await axios.post('http://localhost:3000/payment/create-order', null, { headers: { "Authorization": `Bearer ${token}` } });
+                const response = await axios.post('/payment/create-order', null, { headers: { "Authorization": `Bearer ${token}` } });
                 const data = response.data;
                 const paymentSessionId = data.paymentSessionId;
 

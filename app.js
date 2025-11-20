@@ -14,11 +14,16 @@ import morgan from 'morgan';
 import fs from 'fs'
 import path from 'path'
 import { arcjetMiddleware } from './services/arcjet.middleware.js';
+import {PORT} from './utils/env.js'
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 
 const accessLogStream = fs.createWriteStream(path.join('access.log'),{flags:'a'})
 
-
+app.use(express.static(__dirname));
 app.use(helmet());
 app.use(compression());
 app.use(arcjetMiddleware)
@@ -26,7 +31,9 @@ app.use(arcjetMiddleware)
 
 app.use(cors());
 app.use(express.json());
-
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 app.use('/user',userRouter)
 app.use('/expense',expenseRouter)
@@ -43,7 +50,7 @@ PasswordResetReq.belongsTo(SignedUpUsers)
 
 db.sync().then(() => {
   console.log('Database synced');
-  app.listen(3000, () => {
+  app.listen(PORT, () => {
     console.log('Server is running on port 3000');
     });
 }).catch((error) => {

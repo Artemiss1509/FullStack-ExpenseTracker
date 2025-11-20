@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Please sign in to view your expenses.');
         } else {
             try {
-                const statusResp = await axios.get('http://localhost:3000/payment/premium-status', {
+                const statusResp = await axios.get('/payment/premium-status', {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else {
                     if (viewExpensesDiv) viewExpensesDiv.style.display = '';
 
-                    const expensesResp = await axios.get('http://localhost:3000/expense/all', {
+                    const expensesResp = await axios.get('/expense/all', {
                         headers: { "Authorization": `Bearer ${token}` }
                     });
 
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             } catch (err) {
                 console.error('Error determining premium status or loading expenses:', err);
                 try {
-                    const fallbackResp = await axios.get('http://localhost:3000/expense/all', {
+                    const fallbackResp = await axios.get('/expense/all', {
                         headers: { "Authorization": `Bearer ${token}` }
                     });
                     const expenseList = document.getElementById('expenseList');
@@ -146,7 +146,7 @@ async function handleFormSubmit(event) {
     }
 
     try {
-        await axios.post('http://localhost:3000/user/sign-up', data)
+        await axios.post('/user/sign-up', data)
             .then(response => {
                 console.log(response.data);
                 alert('User signed up successfully!');
@@ -173,7 +173,7 @@ async function loginFormSubmit(event) {
     }
 
     try {
-        await axios.post('http://localhost:3000/user/sign-in', data)
+        await axios.post('/user/sign-in', data)
             .then(response => {
                 const token = response.data.token;
                 localStorage.setItem('token', token);
@@ -213,7 +213,7 @@ async function handleExpenseSubmit(event) {
     };
 
     try {
-        const response = await axios.post('http://localhost:3000/expense/add', data, {
+        const response = await axios.post('/expense/add', data, {
             headers: { "Authorization": `Bearer ${token}` }
         });
 
@@ -277,7 +277,7 @@ function expensePage() {
 
 async function deleteExpense(expenseId) {
     const token = localStorage.getItem('token')
-    await axios.delete(`http://localhost:3000/expense/delete/${expenseId}`, { headers: { "Authorization": `Bearer ${token}` } })
+    await axios.delete(`/expense/delete/${expenseId}`, { headers: { "Authorization": `Bearer ${token}` } })
         .then(response => {
             console.log(response.data);
         })
@@ -321,7 +321,7 @@ async function leaderBoard() {
     head.innerText = 'Leaderboard'
 
     try {
-        const resp = await axios.get('http://localhost:3000/expense/leaderboard');
+        const resp = await axios.get('/expense/leaderboard');
         list.innerHTML = '';
         resp.data.leaderboard.forEach((user) => {
             const li = document.createElement('li');
@@ -350,7 +350,7 @@ async function resetPass(event) {
     const para = document.createElement('p');
 
     try {
-        const checkEmail = await axios.post('http://localhost:3000/user/reset', data);
+        const checkEmail = await axios.post('/user/reset', data);
         if (checkEmail.data.message) {
             para.innerText = `Reset link has been sent to the email: ${data.email}`
         }
@@ -368,7 +368,7 @@ function removeGreyOut() {
 async function deleteExpensePremium(expenseId) {
     const token = localStorage.getItem('token');
     try {
-        const resp = await axios.delete(`http://localhost:3000/expense/delete/${expenseId}`, {
+        const resp = await axios.delete(`/expense/delete/${expenseId}`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
         return resp.data;
@@ -383,7 +383,7 @@ async function getExpenses(endpoint, targetTab, targetPane, page = 1, pageSize =
     if (!endpoint) return console.warn(`No endpoint for ${targetTab}`);
 
     try {
-        const url = `http://localhost:3000/expense/period/${endpoint}?page=${page}&pageSize=${pageSize}`;
+        const url = `/expense/period/${endpoint}?page=${page}&pageSize=${pageSize}`;
         const res = await axios.get(url, { headers: { "Authorization": `Bearer ${token}` } });
 
         const { expenses = [], total = 0, totalPages = 1 } = res.data;
@@ -513,7 +513,7 @@ function renderPagination(endpoint, targetTab, targetPane, currentPage, totalPag
 async function downloadBtn() {
     const token = localStorage.getItem('token')
     try {
-        const getExp = await axios.get('http://localhost:3000/expense/download', { headers: { "Authorization": `Bearer ${token}` } });
+        const getExp = await axios.get('/expense/download', { headers: { "Authorization": `Bearer ${token}` } });
         if(getExp.data.success){
             const a = document.createElement('a')
             a.href = getExp.data.URL;
