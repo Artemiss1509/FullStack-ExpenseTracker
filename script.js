@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resetForm = document.getElementById('resetEmail')
     const tabItems = document.querySelectorAll('.tab-item');
     const tabPanes = document.querySelectorAll('.tab-pane');
-    const currentSize1 = document.getElementById('pageSizeSelect');
-    let currentSize;
+    const  currentSize = document.getElementById('pageSizeSelect');
+    const downloadbtn = document.getElementById('downloadExp');
 
     if (signUpForm) {
         signUpForm.addEventListener('submit', handleFormSubmit);
@@ -18,10 +18,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     let paginationState = { pageSize: 3, page: 1 };
 
-    if (currentSize1) {
-        paginationState.pageSize = parseInt(currentSize1.value, 10) || 3;
-        currentSize1.addEventListener('change', () => {
-            paginationState.pageSize = parseInt(currentSize1.value, 10) || 3;
+    if ( currentSize) {
+        paginationState.pageSize = parseInt( currentSize.value, 10) || 3;
+         currentSize.addEventListener('change', () => {
+            paginationState.pageSize = parseInt( currentSize.value, 10) || 3;
             paginationState.page = 1;
 
             const activeTabItem = document.querySelector('.tab-item.active') || document.querySelector('.tab-item');
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
-                const isPremium = statusResp?.data?.paymentStatus === 'Success';
+                const isPremium = statusResp.data.paymentStatus === 'Success';
                 localStorage.setItem('isPremium', isPremium ? '1' : '0');
 
                 const viewExpensesDiv = document.querySelector('.view-expenses'); // non-premium area
@@ -117,8 +117,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }
-
-
+    if (downloadbtn){
+        const isPremium = localStorage.getItem('isPremium') === '1';
+        if(isPremium){
+            downloadbtn.addEventListener('click', downloadBtn)
+        }else{
+            downloadbtn.disabled = true;
+        }
+        
+    }
 
     if (logoutBtn) {
         logoutBtn.addEventListener('click', signout)
@@ -376,7 +383,7 @@ async function getExpenses(endpoint, targetTab, targetPane, page = 1, pageSize =
     if (!endpoint) return console.warn(`No endpoint for ${targetTab}`);
 
     try {
-        const url = `http://localhost:3000/expense/${endpoint}?page=${page}&pageSize=${pageSize}`;
+        const url = `http://localhost:3000/expense/period/${endpoint}?page=${page}&pageSize=${pageSize}`;
         const res = await axios.get(url, { headers: { "Authorization": `Bearer ${token}` } });
 
         const { expenses = [], total = 0, totalPages = 1 } = res.data;
@@ -501,4 +508,20 @@ function renderPagination(endpoint, targetTab, targetPane, currentPage, totalPag
     next.disabled = currentPage >= totalPages;
     next.addEventListener('click', () => getExpenses(endpoint, targetTab, targetPane, currentPage + 1, pageSize));
     container.appendChild(next);
+}
+
+async function downloadBtn() {
+    const token = localStorage.getItem('token')
+    try {
+        const getExp = await axios.get('http://localhost:3000/expense/download', { headers: { "Authorization": `Bearer ${token}` } });
+        if(getExp.data.success){
+            const a = document.createElement('a')
+            a.href = getExp.data.URL;
+            console.log(getExp)
+            a.download = 'MyExpenses.csv';
+            a.click();
+        }
+    } catch (error) {
+        console.error('Download button function problem',error)
+    }
 }

@@ -1,9 +1,6 @@
 .premium-feature.premium-locked {
-    /* Gray out the appearance */
     opacity: 0.5;
-    /* Prevent mouse clicks and other pointer events */
     pointer-events: none;
-    /* Optional: Change cursor to indicate it's not usable */
     cursor: not-allowed;
 }
 
@@ -30,17 +27,17 @@
 }
 
 .tab-pane {
-  display: none; /* Hide all content panes by default */
+  display: none; 
   padding: 20px;
   border: 1px solid #ccc;
   border-top: none;
 }
 
 .tab-pane.active {
-  display: block; /* Show the active content pane */
+  display: block; 
 }
 
-/* Reset and base */
+
 * { box-sizing: border-box; }
 
 :root {
@@ -149,6 +146,13 @@ button {
 
 button:hover { background: var(--primary-600); }
 button:active { transform: translateY(1px); }
+button:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+}
+
 
 button.ghost {
   background: var(--soft);
@@ -400,7 +404,6 @@ button.danger {
   padding: 12px 0;
 }
 
-/* Match existing containers in your files */
 .login-container,
 .signup-container,
 .passRE,
@@ -411,15 +414,8 @@ button.danger {
   max-width: 960px;
 }
 
-.login-container .card,
-.signup-container .card,
-.passRE .card,
-#reset .card,
-.expense-container .card {
-  /* If you wrap inner content with .card, it’ll get a panel look */
-}
 
-/* Optional: if you keep raw containers, make them centered panels */
+
 .login-container,
 .signup-container,
 .passRE,
@@ -449,7 +445,7 @@ button.danger {
   flex-wrap: wrap;
 }
 
-#row { margin-top: 12px; } /* used by leaderboard/premium injection */
+#row { margin-top: 12px; }
 
 a {
   color: var(--primary);

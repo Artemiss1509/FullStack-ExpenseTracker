@@ -9,7 +9,7 @@ Please click the link below to choose a new password:
 
 ${resetLink}
 
-If you didn’t request this, you can safely ignore this email.
+If you didn't request this, you can safely ignore this email.
 
 This link will expire in 15 minutes.
 

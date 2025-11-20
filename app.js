@@ -13,6 +13,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import fs from 'fs'
 import path from 'path'
+import { arcjetMiddleware } from './services/arcjet.middleware.js';
 const app = express();
 
 const accessLogStream = fs.createWriteStream(path.join('access.log'),{flags:'a'})
@@ -20,7 +21,8 @@ const accessLogStream = fs.createWriteStream(path.join('access.log'),{flags:'a'}
 
 app.use(helmet());
 app.use(compression());
-// app.use(morgan('combined',{stream:accessLogStream}));
+app.use(arcjetMiddleware)
+//app.use(morgan('combined',{stream:accessLogStream}));
 
 app.use(cors());
 app.use(express.json());

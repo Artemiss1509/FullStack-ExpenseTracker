@@ -1,10 +1,12 @@
 import Expenses from "../models/expense.model.js";
 import SignedUpUsers from "../models/user.model.js";
 import { GoogleGenAI } from "@google/genai";
-import { GOOGLE_API } from "../utils/env.js";
+import { GOOGLE_API} from "../utils/env.js";
 import sequelize from "../utils/DB-connection.js";
 import { Op } from "sequelize";
 import {dayRange, lastNDaysRange, currentMonthRange }  from "../utils/day.range.js";
+import { uploadToS3 } from "../services/AWSs3.js";
+
 
 export const addExpense = async (req, res) => {
   const { amount, description, Notes } = req.body;
@@ -143,12 +145,11 @@ export const getLeaderBoard = async (req, res) => {
 
 export const getExpensesPaged = async (req, res) => {
   try {
-    const userId = req.user.id; // from authenticator
+    const userId = req.user.id; 
     const { period } = req.params;
     const page = Math.max(parseInt(req.query.page || '1', 10), 1);
     const pageSize = Math.max(parseInt(req.query.pageSize || '3', 10), 1);
 
-    // figure range if needed
     let where = { UserId: userId };
     if (period === 'daily') {
       const { start, end } = dayRange(new Date());
@@ -164,7 +165,6 @@ export const getExpensesPaged = async (req, res) => {
     }
 
     const offset = (page - 1) * pageSize;
-    // only return needed fields
     const attributes = ['id','amount','description','category','createdAt'];
 
     const { count, rows } = await Expenses.findAndCountAll({
@@ -190,3 +190,17 @@ export const getExpensesPaged = async (req, res) => {
     return res.status(500).json({ message: "Error fetching expenses", error: error.message });
   }
 };
+
+
+
+export const downloadS3 = async (req, res)=>{
+  try {
+    const expenses = await Expenses.findAll({ where: { UserId: req.user.id } });
+    const stringy = JSON.stringify(expenses)
+    const filename = `Expenses${req.user.id}/${new Date}.txt`
+    const fileURL = await uploadToS3(stringy, filename)
+    res.status(200).json({URL:fileURL, success: true})
+  } catch (error) {
+    res.status(500).json({message: 'Error with downloadS3',error: error.message})
+  }
+}
