@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 import {DB_NAME, DB_USER, DB_PASSWORD, DB_ENDPOINT} from './env.js'
 
 const sequelize = new Sequelize(DB_NAME, DB_USER,DB_PASSWORD,{
-    host: 'localhost',
+    host: DB_ENDPOINT,
     dialect: 'mysql'
 });
 
